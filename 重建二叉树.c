@@ -16,10 +16,7 @@ public:
     			return NULL;
     		}
     	//	int length = pre.size();
-        vector<int> leftPre;
-    	vector<int> leftIn;
-		vector<int> rightPre;
-		vector<int> rightIn;		
+        vector<int> leftPre,leftIn,rightPre,rightIn;
     	int rootValue = pre[0]; // 确定根节点的值
     	/*******初始化根节点*********/
     	struct TreeNode* root = new TreeNode(pre[0]);
@@ -31,12 +28,11 @@ public:
     	//	else
     	//		throw std :: exception("Invalid input");
     	}//判断是否有违法输入,保持代码鲁棒性
-    	vector<int> rootInorder = in;
-    	int rootIndex{};
+	int rootIndex{};
     	//在中序中找到根节点的位置
     	int i;
-    	for(i = 0;i < rootInorder.size();++i){
-    		if(rootInorder[i] == rootValue){
+    	for(i = 0;i < in.size();++i){
+    		if(in[i] == rootValue){
     			rootIndex = i;
     			break;
     		}
