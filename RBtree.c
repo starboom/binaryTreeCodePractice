@@ -9,6 +9,8 @@
 typedef usigned long rbtree_key_t;
 typedef long		 rbtree_key_int_t;
 typedef usigned char color_t;
+typedef void(*rbtree_insert_pt)(rbtree_node_t *root,rbtree_node_t *node,
+	rbtree_node_t *sentinel);
 typedef struct rbtree_node_t{
 	rbtree_key_t key;
 	rbtree_node_t *left;
@@ -16,9 +18,11 @@ typedef struct rbtree_node_t{
 	rbtree_node_t *parent;
 	color_t	color; //1 红 0 黑  
 }rbtree_node_t;
+
 typedef struct rbtree_t{
 	rbtree_node_t *root;
 	rbtree_node_t *sentinel; //哨兵
+	rbtree_insert_pt insert;
 }rbtree_t;
 
 /*void rbtree_left_rotate(rbtree_node_t* node_x){
@@ -50,7 +54,79 @@ typedef struct rbtree_t{
 	(tree) -> sentinel = s;				\
 	(tree) -> insert = i;				\//初始化rbtree
 /***************宏函数定义结束*******************************/
+rbtree_node_t* rbtree_min(rbtree_node_t *node,rbtree_node_t *sentinel){
+	while(node -> left != sentinel){
+		node = node -> left;
+	}
+	return node;
+}
+void rbtree_insert_value(rbtree_node_t *temp,rbtree_node_t *node,rbtree_node_t *sentinel){
+	rbtree_node_t **p;
+	for(;;){
+		p = (node -> key < temp -> key)?&temp -> left : &tmp -> right;
+		if(*p == sentinel){
+			break;
+		}
+		temp = *p;
+	}
+	*p = node;
+	node -> parent = temp;
+	node -> left = sentinel;
+	node -> right = sentinel;
+	rbt_red(node);
+}
+void rbtree_insert(volatile rbtree_t *tree,rbtree_node_t *node){
+	rbtree_node_t **root,*temp,*sentinel;
 
+	root = (rbtree_node_t **)&tree -> root;
+	sentinel = tree -> sentinel;
+	if(*root == sentinel){
+		node -> parent = NULL;
+		node -> left = sentinel;
+		node -> right = sentinel;
+		rbt_black(node);
+		*root = node;
+		return;
+	}
+	tree -> insert(*root,node,sentinel);
+	/*re_balance tree*/
+	while(node != *root && rbt_is_red(node -> parent)){
+		if(node -> parent == node -> parent -> parent -> left){
+			temp = node -> parent -> parent -> right;
+			if(rbt_is_red(temp)){
+				rbt_black(node -> parent);
+				rbt_black(temp);
+				rbt_red(node -> parent -> parent);
+				node = node -> parent -> parent;
+			}else{
+				if(node == node -> parent -> right){
+					node = node -> parent;
+					rbtree_left_rotate(root,sentinel,node);
+				}
+				rbt_black(node -> parent);
+				rbt_red(node -> parent -> parent);
+				rbtree_right_rotate(root,sentinel,node -> parent -> parent);
+			}
+		}else{
+			temp = node -> parent -> parent -> left;
+			if(rbt_is_red(temp)){
+				rbt_black(node -> parent);
+				rbt_black(temp);
+				rbt_red(node -> parent -> parent);
+				node = node -> parent -> parent;
+			}else{
+				if(node == node -> parent -> left){
+					node = node -> parent;
+					rbtree_right_rotate(root,sentinel,node);
+				}
+				rbt_black(node -> parent);
+				rbt_red(node -> parent -> parent);
+				rbtree_left_rotate(root,sentinel,node -> parent -> parent);
+			}
+		}
+	}
+	rbt_black(*root);
+}
 
 
 
