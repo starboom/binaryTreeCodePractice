@@ -34,19 +34,24 @@ typedef struct rbtree_t{
 而它的其他域可以设置为任意值。
 我用关键字把它和普通的结点进行区分。
 */
-#define rbtree_sentinel_init(node) rbt_black(node)
+/*rbtree的属性定义宏函数*/
+#define rbtree_sentinel_init(node) rbt_black(node)//哨兵必须是黑色节点 
 
-#define rbt_red(node)	((node) -> color = 1)
-#define rbt_black(node) ((node) -> color = 0)
-#define rbt_is_red(node)	((node) -> color)
-#define rbt_is_black(node)	(!rbt_is_red(node))
-#define rbt_copy_color(n1,n2) (n1 -> color = n2 -> color)
+#define rbt_red(node)	((node) -> color = 1)//设置节点为红
+#define rbt_black(node) ((node) -> color = 0)//设置节点为黑
+#define rbt_is_red(node)	((node) -> color)//判断节点是否为红
+#define rbt_is_black(node)	(!rbt_is_red(node))//判断节点是否为黑
+#define rbt_copy_color(n1,n2) (n1 -> color = n2 -> color)//复制节点颜色
+
 
 #define rbtree_init(tree,s,i)			\
 	rbtree_sentinel_init(s);			\
 	(tree) -> root = s;					\
 	(tree) -> sentinel = s;				\
-	(tree) -> insert = i;				\
+	(tree) -> insert = i;				\//初始化rbtree
+/***************宏函数定义结束*******************************/
+
+
 
 
 
